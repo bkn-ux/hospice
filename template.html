@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>호스피스 백과사전</title>
+<style>
+:root{--ink:#111;--paper:#fbfaf6;--line:#d9d5c8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Serif KR","Malgun Gothic",serif;line-height:1.8}
+header{text-align:center;padding:56px 20px 24px}
+header h1{font-size:2.2rem;margin:12px 0 4px;letter-spacing:.08em}
+header p{margin:0;color:#555}
+nav{position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:10px 16px;z-index:5}
+nav a{white-space:nowrap;color:var(--ink);text-decoration:none;font-size:.85rem;padding:4px 10px;border:1px solid var(--ink);border-radius:20px}
+nav a:hover{background:var(--ink);color:var(--paper)}
+main{max-width:860px;margin:0 auto;padding:0 20px 80px}
+.era{padding-top:48px}
+.era h2{font-size:1.5rem;border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:4px}
+.era .range{color:#666;font-size:.9rem}
+.entry{display:grid;grid-template-columns:130px 1fr;gap:20px;padding:26px 0;border-bottom:1px dashed var(--line);opacity:0;transform:translateY(14px);transition:.7s}
+.entry.in{opacity:1;transform:none}
+.year{font-size:1.4rem;font-weight:700}
+.entry h3{margin:0 0 6px;font-size:1.15rem}
+.term{background:#f0eee5;border-left:3px solid var(--ink);padding:6px 10px;font-size:.9rem;margin-top:8px}
+svg{width:120px;height:120px;fill:none;stroke:#111;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round}
+svg path{stroke-dasharray:var(--l);stroke-dashoffset:var(--l)}
+.in svg path{animation:draw 2.6s ease forwards;animation-delay:calc(var(--i)*.18s)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero svg{width:150px;height:150px}
+@media(max-width:600px){.entry{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){svg path{stroke-dashoffset:0!important;animation:none!important}.entry{opacity:1;transform:none}}
+</style></head><body>
+<header>
+<div class="hero"><svg viewBox="0 0 120 120" class="in"><path d="M60 104C60 104 24 80 24 52C24 38 34 30 44 30C52 30 58 35 60 41C62 35 68 30 76 30C86 30 96 38 96 52C96 80 60 104 60 104Z"/><path d="M60 41C60 60 52 70 44 78"/><path d="M60 41C60 60 68 70 76 78"/><path d="M60 14C57 20 57 24 60 27C63 24 63 20 60 14Z"/><path d="M40 108H80"/></svg></div>
+<h1>호스피스 백과사전</h1><p>연도별로 따라가는 '마지막까지 존엄하게'의 역사 · 고1 눈높이 설명</p>
+</header>
+<nav id="nav"></nav><main id="main"></main>
+<script>
+const DATA=/*DATA*/[];
+const nav=document.getElementById('nav'),main=document.getElementById('main');
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+DATA.forEach((e,i)=>{
+ nav.insertAdjacentHTML('beforeend',`<a href="#e${i}">${esc(e.era)}</a>`);
+ let h=`<section class="era" id="e${i}"><h2>${esc(e.era)}</h2><div class="range">${esc(e.range)}</div><p>${esc(e.intro)}</p>`;
+ e.entries.forEach(x=>{h+=`<article class="entry"><div><div class="year">${esc(x.year)}</div><svg viewBox="0 0 120 120">${x.svg}</svg></div><div><h3>${esc(x.title)}</h3><div>${esc(x.text)}</div><div class="term">${esc(x.term)}</div></div></article>`});
+ main.insertAdjacentHTML('beforeend',h+'</section>');
+});
+document.querySelectorAll('svg path').forEach((p,i)=>{try{p.style.setProperty('--l',Math.ceil(p.getTotalLength())+1)}catch(e){p.style.setProperty('--l',400)}});
+document.querySelectorAll('.entry svg').forEach(s=>s.querySelectorAll('path').forEach((p,i)=>p.style.setProperty('--i',i)));
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.2});
+document.querySelectorAll('.entry').forEach(e=>{io.observe(e);e.addEventListener('click',()=>{e.classList.remove('in');void e.offsetWidth;e.classList.add('in')})});
+</script></body></html>
